@@ -1,4 +1,4 @@
-from base import Match
+from .base import Match
 
 class Either(Match):
     def __init__(self, left, right, rest=None):
@@ -15,3 +15,7 @@ class Either(Match):
                     return end
 
         return None
+    
+    def __eq__(self, other):
+        return super().__eq__(other) and \
+            self.left == other.left and self.right == other.right

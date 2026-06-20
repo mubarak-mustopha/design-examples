@@ -1,5 +1,5 @@
-from either import Either
-from lit import Lit
+from .either import Either
+from .lit import Lit
 
 def test_either_left_match():
     assert Either(Lit("a"), Lit("b")).match("a")

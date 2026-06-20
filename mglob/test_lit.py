@@ -1,4 +1,4 @@
-from lit import Lit
+from .lit import Lit
 
 def test_literal_entire_string_match():
     assert Lit("abc").match("abc")

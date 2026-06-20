@@ -1,5 +1,5 @@
-from any import Any
-from lit import Lit
+from .any import Any
+from .lit import Lit
 
 def test_any_matches_empty_string():
     assert Any().match("")

@@ -1,4 +1,4 @@
-from base import Match
+from .base import Match
 
 class Any(Match):
     def __init__(self, rest=None):

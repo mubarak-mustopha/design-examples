@@ -1,4 +1,4 @@
-from base import Match
+from .base import Match
 
 class Lit(Match):
     def __init__(self, chars, rest=None):
@@ -11,3 +11,7 @@ class Lit(Match):
             return None
         
         return self.rest._match(text, end)
+
+    def __eq__(self, other):
+        return super().__eq__(other) and \
+            self.chars == other.chars
