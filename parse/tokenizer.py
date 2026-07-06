@@ -11,9 +11,14 @@ class Tokenizer:
         self.current = ""
 
     def tok(self, pattern):
-        for char in pattern:
+        index = 0
+        while index < len(pattern):
+            char = pattern[index]
             if char in CHARS:
                 self.current += char
+            elif char == "\\":
+                index += 1
+                self.current += pattern[index]
             elif char == "*":
                 self._add("Any")
             elif char == "{":
@@ -24,6 +29,8 @@ class Tokenizer:
                 self._add("EitherEnd") 
             else:
                 raise NotImplementedError(f"Unknown token '{char}'")
+            
+            index += 1
         self._add(None)
         return self.tokens
     
