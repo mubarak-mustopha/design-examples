@@ -23,11 +23,13 @@ class Parser:
         return Any(self._parse(back))
 
     def _parse_either(self, rest, back):
-        if (len(back) < 3 or \
-            back[0][0] != back[1][0] != 'Lit' or  back[2][0] != 'EitherEnd'):
-            raise ValueError("Malformed 'Either' pattern")
-        
-        left = Lit(back[0][1])
-        right = Lit(back[1][1])
+        children = []
 
-        return Either(left, right, self._parse(back[3:]))
+        while back and back[0][0] == 'Lit':
+            children.append(Lit(back[0][1]))
+            back = back[1:]
+
+        if not back or back[0][0] != 'EitherEnd':
+            raise NotImplementedError('Invalid `Either` pattern.')
+
+        return Either(children, self._parse(back[1:]))
