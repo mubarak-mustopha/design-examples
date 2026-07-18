@@ -42,6 +42,28 @@ def do_if(env, args):
     choice = args[1] if cond else args[2]
     return do(env, choice)
 
+def do_array(env, args):
+    assert len(args) == 1 and isinstance(args[0], int)
+    return [None] * args[0] 
+
+def do_set_array_elem(env, args):
+    # stmt -> ['set-array-elm', var, idx, value]
+    # args -> [var, idx, value]
+    assert len(args) == 3
+    array = do_get(env, [args[0]])
+
+    idx, value = do(env, args[1]), do(env, args[2])
+    assert isinstance(idx, int) and idx < len(array) 
+    array[idx] = value
+
+def do_get_array_elem(env, args):
+    assert len(args) == 2
+    array = do_get(env, [args[0]])
+
+    idx = do(env, args[1])
+    assert isinstance(idx, int) and idx < len(array) 
+    return array[idx]
+
 def do(env, expr):
     # an integer evaluates to itself 
     if isinstance(expr, int): return expr

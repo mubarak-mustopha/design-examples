@@ -1,0 +1,11 @@
+[
+    "seq",
+    ["set", "myarr", ["array", 3]],
+    ["set_array_elem", "myarr", 0, 45],
+    ["set_array_elem", "myarr", 1, 20],
+    ["set_array_elem", "myarr", 2, 35],
+    ["add",
+        ["get_array_elem", "myarr", 0],
+        ["get_array_elem", "myarr", 1]
+    ]
+]
