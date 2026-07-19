@@ -2,31 +2,31 @@ import json
 import sys
 
 def do_add(env, args):
-    assert len(args) == 2
+    check(len(args) == 2, "Expected 2 arguments")
 
     left = do(env, args[0])
     right = do(env, args[1])
     return left + right
 
 def do_abs(env, args):
-    assert len(args) == 1
+    check(len(args) == 1, "Expected 1 argument")
 
     value = do(env, args[0])
     return abs(value)
 
 def do_get(env, args):
-    assert len(args) == 1 and isinstance(args[0], str)
-    assert args[0] in env
+    check(len(args) == 1 and isinstance(args[0], str), "Expected a string argument")
+    check(args[0] in env, f"Unknown variable: {args[0]}")
 
     return env[args[0]]
 
 def do_set(env, args):
-    assert len(args) == 2 and isinstance(args[0], str)
+    check(len(args) == 2 and isinstance(args[0], str), "Expected a string variable name and a value")
 
     env[args[0]] = do(env, args[1])
 
 def do_seq(env, args):
-    assert len(args) > 0
+    check(len(args) > 0, "Expected at least one expression")
 
     for expr in args:
         result = do(env, expr)
@@ -37,43 +37,54 @@ def do_comment(env, args):
     return None
 
 def do_if(env, args):
-    assert len(args) == 3
+    check(len(args) == 3, "Expected 3 arguments")
     cond = do(env, args[0])
     choice = args[1] if cond else args[2]
     return do(env, choice)
 
 def do_array(env, args):
-    assert len(args) == 1 and isinstance(args[0], int)
-    return [None] * args[0] 
+    check(len(args) == 1 and isinstance(args[0], int), "Expected an integer size")
+    return [None] * args[0]
 
 def do_set_array_elem(env, args):
-    # stmt -> ['set-array-elm', var, idx, value]
-    # args -> [var, idx, value]
-    assert len(args) == 3
+    check(len(args) == 3, "Expected 3 arguments")
     array = do_get(env, [args[0]])
 
     idx, value = do(env, args[1]), do(env, args[2])
-    assert isinstance(idx, int) and idx < len(array) 
+    check(isinstance(idx, int) and idx < len(array), "Array index out of bounds")
     array[idx] = value
 
 def do_get_array_elem(env, args):
-    assert len(args) == 2
+    check(len(args) == 2, "Expected 2 arguments")
     array = do_get(env, [args[0]])
 
     idx = do(env, args[1])
-    assert isinstance(idx, int) and idx < len(array) 
+    check(isinstance(idx, int) and idx < len(array), "Array index out of bounds")
     return array[idx]
+
+def do_catch(env, args):
+    check(len(args) == 2, "Expected 2 arguments for `catch` statement")
+    try:
+        return do(env, args[0])
+    except TLLException:
+        return do(env, args[1])
 
 def do(env, expr):
     # an integer evaluates to itself 
     if isinstance(expr, int): return expr
 
-    assert isinstance(expr, list)
+    check(isinstance(expr, list), "Expression must be a list")
 
-    assert expr[0] in OPS, f"Unknown operation `{expr[0]}`"   
+    check(expr[0] in OPS, f"Unknown operation `{expr[0]}`")
 
     func = OPS[expr[0]]
     return func(env, expr[1:])
+
+class TLLException(Exception):
+    pass
+
+def check(expr, error_msg: str):
+    if not expr: raise TLLException(error_msg)
 
 OPS = {
     name.replace("do_", ""): func
@@ -82,7 +93,7 @@ OPS = {
 }
 
 def main():
-    assert len(sys.argv) == 2, f"Usage: python expr.py file_name"
+    check(len(sys.argv) == 2, "Usage: python expr.py file_name")
     with open(sys.argv[1], "r") as reader:
         program = json.load(reader)
     result = do({}, program)
