@@ -1,0 +1,5 @@
+[
+    "catch",
+    ["add", 2],
+    ["print", "An error occured"]
+]

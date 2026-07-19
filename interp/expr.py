@@ -14,6 +14,10 @@ def do_abs(env, args):
     value = do(env, args[0])
     return abs(value)
 
+def do_leq(env, args):
+    check(len(args) == 2, "Expected 2 arguments for the `leq` statement")
+    return do(env, args[0]) <= do(env, args[1])
+
 def do_get(env, args):
     check(len(args) == 1 and isinstance(args[0], str), "Expected a string argument")
     check(args[0] in env, f"Unknown variable: {args[0]}")
@@ -68,6 +72,19 @@ def do_catch(env, args):
         return do(env, args[0])
     except TLLException:
         return do(env, args[1])
+    
+def do_print(env, args):
+    final = [arg if isinstance(arg, str) else str(do(env, arg)) for arg in args]
+    print(' '.join(final)) 
+
+def do_repeat(env, args):
+    check(len(args) == 2, "Expected 2 argument for the `repeat` statement")
+    check(isinstance(args[0], int), "1st argument must be an integer")
+
+    count = args[0]
+    while count > 0:
+        do(env, args[1])
+        count -= 1
 
 def do(env, expr):
     # an integer evaluates to itself 
