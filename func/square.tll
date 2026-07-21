@@ -1,0 +1,20 @@
+[
+"seq",
+
+["set", "square", 
+    ["func", ["num"], 
+    [
+        "seq",
+        ["set", "result", 0], 
+        ["repeat", ["get", "num"], 
+        ["set", "result", ["add", ["get", "result"], ["get", "num"]]]
+        ],
+        ["print", "The square of", ["get", "num"], "is", ["get", "result"]]
+    ]]
+],
+
+["call", "square", 5],
+["call", "square", 6],
+["call", "square", 7]
+
+]
