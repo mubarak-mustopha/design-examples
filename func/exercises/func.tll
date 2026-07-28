@@ -1,0 +1,9 @@
+[
+    "seq",
+    ["func", "double", ["num"], [
+        "seq",
+        ["set", "result", ["add", ["get", "num"], ["get", "num"]]],
+        ["get", "result"]
+    ]],
+    ["call", "double", 40]
+]
