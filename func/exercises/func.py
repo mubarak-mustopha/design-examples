@@ -1,6 +1,8 @@
 import json
 import sys
 
+from collections import ChainMap
+
 def do_add(env, args):
     check(len(args) == 2, "Expected 2 arguments")
 
@@ -101,7 +103,7 @@ def do_func(env, args):
         body = ["seq", *args[1:]]
         return ["func", params, body]
 
-def do_call(env, args):
+def do_call(env: ChainMap, args):
     check(len(args) == 2, "Expected 2 arguments")
     func = do_get(env, [args[0]])
     values = [do(env, arg) for arg in args[1:]]
@@ -109,10 +111,11 @@ def do_call(env, args):
     params, body = func[1], func[2]
     check(len(params) == len(values), "")
     # env.append(dict(zip(params, values))) expert's choice    
-    env.append({params[i]: values[i] for i in range(len(params))}) # novice's
+    # env.append({params[i]: values[i] for i in range(len(params))}) # novice's
+    env.maps.insert(0, {params[i]: values[i] for i in range(len(params))})
 
     result = do(env, body)
-    env.pop()
+    env.maps.pop(0)
     return result
 
 def do(env, expr):
@@ -129,20 +132,18 @@ def do(env, expr):
     #     set_trace()
     return func(env, expr[1:])
 
-def env_get(env: list, name: str):
-    for frame in reversed(env):
-        if name in frame:
-            return frame[name]
+def env_get(env: ChainMap, name: str):
+    return env.get(name)
         
-def env_set(env: list, name: str, value):
-    for frame in reversed(env):
+def env_set(env: ChainMap, name: str, value):
+    for frame in env.maps:
         if name in frame:
             old_value = frame[name]
             if isinstance(old_value, list) and len(old_value) > 0:
                 check(old_value[0]!="func", f"Can't reassign function variable `{name}`")
             frame[name] = value
             return
-    env[-1][name] = value
+    env[name] = value
 
 class TLLException(Exception):
     pass
@@ -160,7 +161,7 @@ def main():
     check(len(sys.argv) == 2, "Usage: python expr.py file_name")
     with open(sys.argv[1], "r") as reader:
         program = json.load(reader)
-    result = do([{}], program)
+    result = do(ChainMap(), program)
     print(f"=> {result}")
 
 if __name__=="__main__":
