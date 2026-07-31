@@ -1,2 +1,2 @@
 # design-examples
-[Software Design By Example] (https://third-bit.com/sdxpy/)
+[Software Design By Example](https://third-bit.com/sdxpy/)
