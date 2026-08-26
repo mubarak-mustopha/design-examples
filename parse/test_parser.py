@@ -17,3 +17,6 @@ def test_parse_literal_followed_by_either():
 
 def test_parse_either_followed_by_lit():
     assert Parser()._parse(Tokenizer().tok("{macro,micro}soft")) == Either([Lit("macro"), Lit("micro")], Lit("soft"))
+
+def test_parse_sq_either():
+    assert Parser()._parse(Tokenizer().tok("[xyz]abc")) == Either([Lit("x"), Lit("y"), Lit("z")], Lit("abc"))

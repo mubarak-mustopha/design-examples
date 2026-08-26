@@ -27,6 +27,10 @@ class Tokenizer:
                 self._add(None)
             elif char == "}":
                 self._add("EitherEnd") 
+            elif char == "[":
+                self._add("SqEitherStart")
+            elif char == "]":
+                self._add("SqEitherEnd")
             else:
                 raise NotImplementedError(f"Unknown token '{char}'")
             
