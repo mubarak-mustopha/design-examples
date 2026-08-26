@@ -15,18 +15,17 @@ class BestCursor:
         self._advance()
         if self._row == len(self._text):
             raise StopIteration
-        if len(self._text[self._row]) == 0:
-            self._row += 1
-            self._col = -1
-            return self.__next__() 
-        return self._text[self._row][self._col]
+        elif self._col < 0:
+            return self.__next__()
+        else:
+            return self._text[self._row][self._col]
 
     def _advance(self):
         if self._row < len(self._text):
             self._col += 1
             if self._col == len(self._text[self._row]):
+                self._col = -1
                 self._row += 1
-                self._col = 0
 
 
 def gather(buffer):
@@ -55,7 +54,7 @@ def test_better_iterator_nested_loop():
     for outer in buffer:
         for inner in buffer:
             result += inner
-
+            
     assert result == "abab"
 
 # ["abc", "def", "hjk"] 
