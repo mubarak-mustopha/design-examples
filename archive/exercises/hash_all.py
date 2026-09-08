@@ -10,9 +10,12 @@ def hash_all(root):
     for name in glob("**/*.*", root_dir=root, recursive=True):
         full_name = Path(root, name)
         with open(full_name, "rb") as f:
-            hash_code = sha256(f.read()).hexdigest()[:16]
+            hash_code = ourHash(f.read())
             result.append((name, hash_code))
     return result
+
+def ourHash(byte_stream: bytes):
+    return sha256(byte_stream).hexdigest()[:HASH_LEN]
 
 if __name__=="__main__":
     assert len(sys.argv) == 2, "Usage: python hash_all.py sample_dir"
